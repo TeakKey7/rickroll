@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8' />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#000000">
+  <script src="/js/hls.js"></script>
+  <title>Get Rickrolled</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: black;
+    }
+
+    video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+
+    #refreshBtn, #unmuteBtn {
+      position: absolute;
+      z-index: 10;
+      font-size: 1em;
+      padding: 0.5em 1em;
+      background: rgba(255, 255, 255, 0.8);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #refreshBtn {
+      top: 1em;
+      left: 1em;
+      display: none;
+    }
+
+    #unmuteBtn {
+      top: 4em;
+      left: 1em;
+      display: none;
+    }
+  </style>
+</head>
+
+<body onload="startVideo()">
+
+  <button id="refreshBtn" onclick="startVideo(); location.reload()">Refresh Page</button>
+  <button id="unmuteBtn" onclick="video.muted = false;">UNMUTE</button>
+
+  <video id="video" playsinline loop></video>
+
+  <script>
+    const video = document.getElementById('video');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const unmuteBtn = document.getElementById('unmuteBtn');
+
+    function tryPlay() {
+      video.play().then(() => {
+        if (video.muted) {
+          unmuteBtn.style.display = 'inline-block';
+        }
+      }).catch(err => {
+        if (err.name === "NotAllowedError") {
+          console.warn("Playback blocked: user interaction required.");
+          refreshBtn.style.display = "inline-block";
+        } else {
+          console.error("Playback error:", err);
+        }
+      });
+    }
+
+    function startVideo() {
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource('rickroll/h264_master.m3u8');
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, tryPlay);
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = 'rickroll/h264_master.m3u8';
+        video.addEventListener('loadedmetadata', tryPlay);
+      }
+    }
+  </script>
+
+</body>
+</html>
+
