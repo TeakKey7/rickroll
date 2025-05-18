@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#000000">
   <script src="/js/hls.js"></script>
-  <title>Get Rickrolled</title>
+  <title>Please Reload Page</title>
 
   <style>
     html, body {
@@ -71,6 +71,7 @@
         if (video.muted) {
           unmuteBtn.style.display = 'inline-block';
         }
+	document.title = "Get Rickrolled";
       }).catch(err => {
         if (err.name === "NotAllowedError") {
           console.warn("Playback blocked: user interaction required.");
